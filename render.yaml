@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: marksafe-backend
+    runtime: python
+    plan: free
+    rootDir: marksafe-backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT
+
+  - type: web
+    name: marksafe-frontend
+    runtime: node
+    plan: free
+    rootDir: marksafe-frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
