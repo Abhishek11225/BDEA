@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -75,6 +76,7 @@ export default function LandingPage() {
             <Link href="#features" className="hover:text-slate-800 transition-colors">Features</Link>
             <Link href="#trust" className="hover:text-slate-800 transition-colors">Security</Link>
           </div>
+          <ThemeToggle />
           <Link href="/login" className="px-5 py-2.5 bg-[var(--color-brand-primary)] text-white text-sm font-medium rounded-md shadow-sm hover:bg-[var(--color-brand-secondary)] transition-colors">
             Examiner Login
           </Link>
