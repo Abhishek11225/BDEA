@@ -55,13 +55,6 @@ export default function LandingPage() {
     { name: "National Evaluation Network", short: "NEN", icon: Globe },
   ];
 
-  const stats = [
-    { value: "450k+", label: "Answer Scripts Processed" },
-    { value: "12+", label: "State Examination Boards" },
-    { value: "99.97%", label: "Accuracy Rate" },
-    { value: "45", label: "Active Evaluation Centers" },
-  ];
-
   return (
     <div className="min-h-screen flex flex-col bg-[var(--color-paper)] text-[var(--color-ink)] font-sans">
       
@@ -89,7 +82,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col overflow-hidden relative">
+      <main className="flex-1 flex flex-col relative">
         
         {/* Subtle background */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-25 pointer-events-none">
@@ -225,18 +218,17 @@ export default function LandingPage() {
         {/* Stats Bar */}
         <section className="bg-[var(--color-brand-primary)] py-10 px-6">
           <motion.div 
-            className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
+            className="max-w-4xl mx-auto text-center flex flex-col items-center justify-center"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
             variants={containerVariants}
           >
-            {stats.map((stat) => (
-              <motion.div key={stat.label} variants={itemVariants}>
-                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-sm text-slate-300 font-medium">{stat.label}</div>
-              </motion.div>
-            ))}
+            <motion.div variants={itemVariants}>
+              <div className="text-xl md:text-3xl font-bold text-white tracking-wide uppercase">
+                Tested By Bansal Group Of Institute
+              </div>
+            </motion.div>
           </motion.div>
         </section>
 
