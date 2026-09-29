@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,26 +15,38 @@ const DEMO_CREDENTIALS = [
   { department: "Civil" as Department, userId: "civil_examiner5", password: "Civil@2026" },
 ];
 
-/** Framer Motion variants that honour prefers-reduced-motion. */
-const reducedMotion =
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-const fadeSlide = reducedMotion
-  ? { initial: {}, animate: {}, exit: {} }
-  : {
-      initial: { opacity: 0, y: 12 },
-      animate: { opacity: 1, y: 0 },
-      exit: { opacity: 0, y: -8 },
-      transition: { duration: 0.2 },
-    };
-
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-paper)]">
+        <div className="text-slate-400 text-sm">Loading...</div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") ?? "/home";
+
+  /** Framer Motion variants that honour prefers-reduced-motion. */
+  const reducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const fadeSlide = reducedMotion
+    ? { initial: {}, animate: {}, exit: {} }
+    : {
+        initial: { opacity: 0, y: 12 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -8 },
+        transition: { duration: 0.2 },
+      };
 
   const [department, setDepartment] = useState<Department | "">("");
   const [userId, setUserId] = useState("");
