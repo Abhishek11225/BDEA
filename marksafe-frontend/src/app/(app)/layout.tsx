@@ -23,7 +23,7 @@ import {
   Moon
 } from "lucide-react";
 import type { UserSession } from "@/lib/auth/types";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -164,8 +164,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {/* Right: Context Line, Theme Toggle & Profile */}
           <div className="flex items-center gap-3 md:gap-4 shrink-0">
 
-            {/* Theme Toggle Button */}
-            <ThemeToggle />
 
             <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200/80 rounded-lg text-xs font-bold text-emerald-800">
               <ShieldCheck size={14} className="text-emerald-600" />

@@ -15,7 +15,7 @@ const DEMO_CREDENTIALS = [
   { department: "Civil" as Department, userId: "civil_examiner5", password: "Civil@2026" },
 ];
 
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 export default function LoginPage() {
   return (
@@ -112,10 +112,6 @@ function LoginContent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-surface-muted)] text-[var(--color-ink)] font-sans relative overflow-hidden p-6">
-      {/* Top Bar for Theme Toggle */}
-      <div className="absolute top-0 left-0 w-full p-4 flex justify-end z-20 pointer-events-auto">
-        <ThemeToggle />
-      </div>
 
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
