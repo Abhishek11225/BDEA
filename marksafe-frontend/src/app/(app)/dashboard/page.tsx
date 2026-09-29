@@ -41,7 +41,7 @@ export default function ExaminerDashboard() {
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.3, ease: "easeOut" }
+      transition: { duration: 0.3, ease: "easeOut" as const }
     }
   };
 
@@ -66,7 +66,7 @@ export default function ExaminerDashboard() {
               </span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Greetings, Dr. Sharma
+              Hello
             </h1>
             <p className="text-slate-500 text-xs md:text-sm mt-1">
               Senior Examiner • Evaluation Center #04 • Target Batch: <span className="font-mono text-slate-800 font-bold">PHYS-2026-04</span>

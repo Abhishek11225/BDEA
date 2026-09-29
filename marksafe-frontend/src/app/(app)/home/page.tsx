@@ -36,7 +36,7 @@ export default function AppHome() {
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.35, ease: "easeOut" }
+      transition: { duration: 0.35, ease: "easeOut" as const }
     }
   };
 
@@ -62,7 +62,7 @@ export default function AppHome() {
               </motion.div>
               
               <motion.h1 variants={itemVariants} className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-2">
-                Greetings, Dr. Sharma
+                Hello
               </motion.h1>
               <motion.p variants={itemVariants} className="text-slate-300 max-w-2xl text-sm md:text-base font-normal leading-relaxed">
                 Your BDEA Evaluation Portal is live. You have <span className="text-amber-400 font-bold">42 pending scripts</span> assigned for physical evaluation & AI verification.

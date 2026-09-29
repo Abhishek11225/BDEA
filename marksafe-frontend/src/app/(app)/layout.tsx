@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LayoutDashboard, 
@@ -22,12 +22,17 @@ import {
   Sun,
   Moon
 } from "lucide-react";
+import type { UserSession } from "@/lib/auth/types";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [profileOpen, setProfileOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [session, setSession] = useState<Omit<UserSession, "exp"> | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const mainScrollRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
@@ -39,6 +44,34 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { name: "Rubric Builder", href: "/rubric-builder", icon: CheckSquare },
     { name: "Audit Trail", href: "/audit", icon: History },
   ];
+
+  // Auth check on mount
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then(async (res) => {
+        if (!res.ok) {
+          router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+          return;
+        }
+        const data = await res.json();
+        setSession(data.session);
+        setIsCheckingAuth(false);
+      })
+      .catch(() => {
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      });
+  }, [pathname, router]);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    setProfileOpen(false);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      /* best-effort */
+    }
+    router.replace("/login");
+  };
 
   const handleScroll = () => {
     if (mainScrollRef.current) {
@@ -66,18 +99,28 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, [pathname]);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  // Show nothing while checking auth to avoid flash of content
+  if (isCheckingAuth) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#f8fafc]">
+        <div className="text-sm text-slate-400 font-medium">Loading...</div>
+      </div>
+    );
+  }
+
+  const userInitials = session?.name
+    ? session.name
+        .split(" ")
+        .filter((_, i, arr) => i === 0 || i === arr.length - 1)
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "??";
 
   return (
-    <div className={`flex flex-col h-screen overflow-hidden font-sans relative transition-colors duration-300 ${
-      isDarkMode ? "bg-slate-950 text-slate-100 dark" : "bg-[#f8fafc] text-slate-900"
-    }`}>
+    <div className={`flex flex-col h-screen overflow-hidden font-sans relative transition-colors duration-300 bg-[#f8fafc] text-slate-900`}>
       {/* Top Navbar */}
-      <nav className={`border-b shadow-xs z-30 shrink-0 transition-colors duration-300 ${
-        isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200/90 text-slate-900"
-      }`}>
+      <nav className={`border-b shadow-xs z-30 shrink-0 transition-colors duration-300 bg-white border-slate-200/90 text-slate-900`}>
         <div className="px-6 md:px-8 flex items-center justify-between h-16 md:h-18">
           
           {/* Left: Brand Logo & Title */}
@@ -87,9 +130,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <span className="font-extrabold text-sm tracking-tight">BDEA</span>
               </div>
               <div className="flex flex-col">
-                <span className={`font-extrabold text-base md:text-lg leading-none tracking-tight transition-colors ${
-                  isDarkMode ? "text-white group-hover:text-amber-400" : "text-slate-900 group-hover:text-amber-700"
-                }`}>
+                <span className={`font-extrabold text-base md:text-lg leading-none tracking-tight transition-colors text-slate-900 group-hover:text-amber-700`}>
                   BDEA
                 </span>
                 <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest leading-normal mt-0.5">
@@ -110,9 +151,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-150 ${
                     isActive 
                       ? "bg-slate-900 text-white shadow-xs border border-slate-800" 
-                      : isDarkMode
-                        ? "text-slate-300 hover:bg-slate-800 hover:text-white"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
                 >
                   <item.icon size={17} className={isActive ? "text-amber-400" : "text-slate-400"} />
@@ -122,31 +161,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             })}
           </div>
 
-          {/* Right: Security Badge, Theme Toggle & Profile */}
+          {/* Right: Context Line, Theme Toggle & Profile */}
           <div className="flex items-center gap-3 md:gap-4 shrink-0">
-            
+
             {/* Theme Toggle Button */}
-            <button 
-              onClick={toggleTheme}
-              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all active:scale-95 ${
-                isDarkMode 
-                  ? "bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700" 
-                  : "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              {isDarkMode ? (
-                <>
-                  <Sun size={15} className="text-amber-400" />
-                  <span className="hidden sm:inline">Light Mode</span>
-                </>
-              ) : (
-                <>
-                  <Moon size={15} className="text-slate-600" />
-                  <span className="hidden sm:inline">Dark Mode</span>
-                </>
-              )}
-            </button>
+            <ThemeToggle />
 
             <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200/80 rounded-lg text-xs font-bold text-emerald-800">
               <ShieldCheck size={14} className="text-emerald-600" />
@@ -157,16 +176,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="relative">
               <button 
                 onClick={() => setProfileOpen(!profileOpen)}
-                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg border transition-all ${
-                  isDarkMode ? "hover:bg-slate-800 border-slate-800" : "hover:bg-slate-100 border-transparent hover:border-slate-200"
-                }`}
+                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg border transition-all hover:bg-slate-100 border-transparent hover:border-slate-200`}
               >
                 <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-amber-400 text-xs font-bold shadow-xs">
-                  DS
+                  {userInitials}
                 </div>
                 <div className="hidden md:flex flex-col text-left">
-                  <span className={`text-xs md:text-sm font-bold leading-tight ${isDarkMode ? "text-white" : "text-slate-800"}`}>Dr. Sharma</span>
-                  <span className="text-[10px] text-slate-400 font-mono leading-tight">Senior Examiner</span>
+                  <span className={`text-xs md:text-sm font-bold leading-tight text-slate-800`}>
+                    {session?.name ?? "User"}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono leading-tight uppercase tracking-wider">
+                    {session ? `Department ${session.department}` : "—"}
+                  </span>
                 </div>
                 <ChevronDown size={14} className="text-slate-400" />
               </button>
@@ -174,26 +195,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               {profileOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)} />
-                  <div className={`absolute right-0 top-full mt-2 w-56 border rounded-xl shadow-xl z-50 py-2 text-xs ${
-                    isDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"
-                  }`}>
-                    <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 mb-1">
-                      <div className="font-bold text-sm">Dr. Sharma</div>
-                      <div className="text-[11px] text-slate-500 mt-0.5">Senior Examiner · PHYS-2026</div>
+                  <div className={`absolute right-0 top-full mt-2 w-56 border rounded-xl shadow-xl z-50 py-2 text-xs bg-white border-slate-200 text-slate-900`}>
+                    <div className="px-4 py-2.5 border-b border-slate-100 mb-1">
+                      <div className="font-bold text-sm">{session?.name ?? "User"}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5 uppercase tracking-wider">
+                        {session ? `Department ${session.department}` : "—"}
+                      </div>
                       <div className="flex items-center gap-1.5 mt-2 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-mono font-semibold w-fit">
                         <Activity size={12} /> Active Session: OK
                       </div>
                     </div>
-                    <button className="flex items-center gap-2.5 w-full px-4 py-2 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                      <User size={15} className="text-slate-400" /> My Profile
-                    </button>
-                    <button className="flex items-center gap-2.5 w-full px-4 py-2 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                      <Settings size={15} className="text-slate-400" /> Portal Settings
-                    </button>
-                    <div className="border-t border-slate-100 dark:border-slate-800 mt-1 pt-1">
-                      <Link href="/" className="flex items-center gap-2.5 w-full px-4 py-2 text-rose-600 font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">
-                        <LogOut size={15} /> Log Out
-                      </Link>
+                    <div className="pt-1">
+                      <button
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                        className="flex items-center gap-2.5 w-full px-4 py-2 text-rose-600 font-semibold hover:bg-rose-50 transition-colors disabled:opacity-50"
+                      >
+                        <LogOut size={15} /> {isLoggingOut ? "Logging out..." : "Log Out"}
+                      </button>
                     </div>
                   </div>
                 </>

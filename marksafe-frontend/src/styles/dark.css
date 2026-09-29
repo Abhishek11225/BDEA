@@ -1,0 +1,130 @@
+/* Dark Theme Overrides */
+html.dark {
+  /* Page & Surface Backgrounds */
+  --color-paper: #0F1319;
+  --color-surface: #171C24;
+  --color-surface-hover: #1E2530;
+  --color-surface-muted: #252D3A;
+
+  /* Inverted White (Cards/Surfaces in light, now dark) */
+  --color-white: #171C24;
+
+  /* Slate Palette Inversion (from light backgrounds to dark borders & light text) */
+  --color-slate-50: #1E2530; /* Raised surface */
+  --color-slate-100: #252D3A; /* Hovered surface / alternate */
+  --color-slate-200: #2A313B; /* Hairline borders */
+  --color-slate-300: #3B4453; /* Strong borders */
+  --color-slate-400: #6B7280; /* Disabled text */
+  --color-slate-500: #9AA3AF; /* Muted text */
+  --color-slate-600: #CBD5E1; /* Secondary text */
+  --color-slate-700: #E2E8F0; /* Primary text */
+  --color-slate-800: #E7E9EC; /* Strong text */
+  --color-slate-900: #F1F5F9; /* Titles / previously dark surfaces now light */
+  --color-slate-950: #F8FAFC;
+
+  /* Brand Overrides (Desaturated/lightened for dark mode contrast) */
+  --color-brand-primary: #7FA6D9; /* Primary accent */
+  --color-brand-secondary: #5C84BA;
+  --color-brand-accent: #D9A441;
+  --color-ink: #E7E9EC; /* Global text color */
+
+  /* Status Colors */
+  --color-status-green: #4FB286;
+  --color-status-amber: #D9A441;
+  --color-status-red: #E5695D;
+
+  /* Semantic Palettes for Status Badges (bg = transparent dark, text = bright) */
+  /* Emerald */
+  --color-emerald-50: rgba(79, 178, 134, 0.15);
+  --color-emerald-100: rgba(79, 178, 134, 0.25);
+  --color-emerald-200: rgba(79, 178, 134, 0.4);
+  --color-emerald-300: #4FB286;
+  --color-emerald-400: #4FB286;
+  --color-emerald-500: #4FB286;
+  --color-emerald-600: #4FB286;
+  --color-emerald-700: #88D4B3; /* Text color inside badges */
+  --color-emerald-800: #A9E0C7;
+
+  /* Amber */
+  --color-amber-50: rgba(217, 164, 65, 0.15);
+  --color-amber-100: rgba(217, 164, 65, 0.25);
+  --color-amber-200: rgba(217, 164, 65, 0.4);
+  --color-amber-300: #D9A441;
+  --color-amber-400: #D9A441;
+  --color-amber-500: #D9A441;
+  --color-amber-600: #D9A441;
+  --color-amber-700: #EAC57A; /* Text color inside badges */
+  --color-amber-800: #F2D79C;
+
+  /* Rose */
+  --color-rose-50: rgba(229, 105, 93, 0.15);
+  --color-rose-100: rgba(229, 105, 93, 0.25);
+  --color-rose-200: rgba(229, 105, 93, 0.4);
+  --color-rose-300: #E5695D;
+  --color-rose-400: #E5695D;
+  --color-rose-500: #E5695D;
+  --color-rose-600: #E5695D;
+  --color-rose-700: #EF9C95; /* Text color inside badges */
+  --color-rose-800: #F5B9B4;
+
+  /* Blue */
+  --color-blue-50: rgba(127, 166, 217, 0.15);
+  --color-blue-100: rgba(127, 166, 217, 0.25);
+  --color-blue-200: rgba(127, 166, 217, 0.4);
+  --color-blue-300: #7FA6D9;
+  --color-blue-400: #7FA6D9;
+  --color-blue-500: #7FA6D9;
+  --color-blue-600: #7FA6D9;
+  --color-blue-700: #A9C5EB; /* Text color inside badges */
+  --color-blue-800: #C6D9F2;
+
+  /* Green (often used synonymously with emerald in the app) */
+  --color-green-50: rgba(79, 178, 134, 0.15);
+  --color-green-100: rgba(79, 178, 134, 0.25);
+  --color-green-200: rgba(79, 178, 134, 0.4);
+  --color-green-500: #4FB286;
+  --color-green-700: #88D4B3;
+
+  /* Shadows - flattened for dark mode */
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.4);
+
+  /* Native elements theme */
+  color-scheme: dark;
+}
+
+/* Arbitrary Hardcoded Color Overrides */
+html.dark .bg-\[\#f8fafc\] {
+  background-color: #0F1319;
+}
+html.dark .text-\[\#f8fafc\] {
+  color: #0F1319;
+}
+html.dark .border-\[\#f8fafc\] {
+  border-color: #0F1319;
+}
+
+/* Custom Scrollbar in Dark Mode */
+html.dark ::-webkit-scrollbar-track {
+  background: #171C24;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #3B4453;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6B7280;
+}
+
+/* Ensure images don't invert, but apply filter to logos if needed */
+/* 'The script/page viewer: keep the SCANNED ANSWER-SHEET IMAGES exactly as they are' */
+html.dark img.logo-invert {
+  filter: invert(1) hue-rotate(180deg) brightness(1.5);
+}
+
+/* Hide bright gradients/glows in dark mode if they exist */
+html.dark .blur-\[100px\],
+html.dark .blur-\[120px\] {
+  opacity: 0.1 !important; /* using !important to override inline or standard opacity if any, to ensure sober dark mode */
+}
